@@ -25,11 +25,11 @@ jobs:
           -r win-x64
           --self-contained true
           -p:PublishSingleFile=true
-          -p:PublishDir=publish/
+          -p:PublishDir="${{ github.workspace }}/publish"
           -p:IncludeNativeLibrariesForSelfExtract=true
 
       - name: Copy MysticLight SDK DLL
-        run: Copy-Item "mystic-rgb/Mystic_light_SDK_1.0.0.08/MysticLight_SDK_x64.dll" "publish/MysticLight_SDK.dll"
+        run: Copy-Item "mystic-rgb/Mystic_light_SDK_1.0.0.08/MysticLight_SDK_x64.dll" "${{ github.workspace }}/publish/MysticLight_SDK.dll"
 
       - name: Publish mystic-rgb-installer.exe
         run: >
@@ -38,7 +38,7 @@ jobs:
           -r win-x64
           --self-contained true
           -p:PublishSingleFile=true
-          -p:PublishDir=publish/
+          -p:PublishDir="${{ github.workspace }}/publish"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
