@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>mystic_rgb</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Mystic_light_SDK_1.0.0.08\**" />
+    <Compile Remove="installer\**" />
+  </ItemGroup>
+
+  <Target Name="CopyMysticLightDLL" AfterTargets="Build">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Mystic_light_SDK_1.0.0.08\MysticLight_SDK_x64.dll"
+          DestinationFiles="$(OutputPath)MysticLight_SDK.dll"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="BuildInstallerExe" AfterTargets="CopyMysticLightDLL">
+    <Exec Command="dotnet publish &quot;$(MSBuildProjectDirectory)\installer\mystic-rgb.installer.csproj&quot; -c $(Configuration) -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishDir=&quot;$(MSBuildProjectDirectory)\obj\installer-publish\&quot; /nologo"
+          IgnoreExitCode="false" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\obj\installer-publish\mystic-rgb-installer.exe"
+          DestinationFiles="$(MSBuildProjectDirectory)\$(OutputPath)mystic-rgb-installer.exe"
+          SkipUnchangedFiles="true" />
+    <Message Text="Installer generated: $(OutputPath)mystic-rgb-installer.exe" Importance="high" />
+  </Target>
+
+</Project>
