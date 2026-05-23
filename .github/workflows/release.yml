@@ -1,0 +1,50 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish mystic-rgb.exe
+        run: >
+          dotnet publish mystic-rgb/mystic-rgb.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishDir=publish/
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: Copy MysticLight SDK DLL
+        run: Copy-Item "mystic-rgb/Mystic_light_SDK_1.0.0.08/MysticLight_SDK_x64.dll" "publish/MysticLight_SDK.dll"
+
+      - name: Publish mystic-rgb-installer.exe
+        run: >
+          dotnet publish mystic-rgb/installer/mystic-rgb.installer.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishDir=publish/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            publish/mystic-rgb.exe
+            publish/MysticLight_SDK.dll
+            publish/mystic-rgb-installer.exe
+          generate_release_notes: true
