@@ -187,36 +187,6 @@ void RunDeviceList(string effectName, string? colorValue)
     };
 }
 
-string[]? TryGetDeviceStyles()
-{
-    if (NativeMethods.MLAPI_Initialize() != 0) return null;
-    try
-    {
-        if (NativeMethods.MLAPI_GetDeviceInfo(out var devTypes, out var ledCounts) != 0) return null;
-
-        var all = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        for (int i = 0; i < devTypes.Length; i++)
-        {
-            int n = int.TryParse(ledCounts[i], out int x) ? x : 1;
-            for (int area = 0; area < n; area++)
-                if (NativeMethods.MLAPI_GetLedInfo(devTypes[i], area, out _, out string[]? styles) == 0 && styles != null)
-                    foreach (var s in styles) all.Add(s);
-        }
-
-        var result = all.OrderBy(s => s).ToArray();
-        try { File.WriteAllLines(cacheFile, result); } catch { }
-        return result;
-    }
-    catch
-    {
-        return null;
-    }
-    finally
-    {
-        NativeMethods.MLAPI_Release();
-    }
-}
-
 bool TaskExists()
 {
     int rc = RunCmd("schtasks", $"/Query /TN \"{TaskName}\"", silent: true);

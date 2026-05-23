@@ -23,7 +23,7 @@
   </Target>
 
   <Target Name="BuildInstallerExe" AfterTargets="CopyMysticLightDLL">
-    <Exec Command="dotnet publish &quot;$(MSBuildProjectDirectory)\installer\mystic-rgb.installer.csproj&quot; -c $(Configuration) -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishDir=&quot;$(MSBuildProjectDirectory)\obj\installer-publish\&quot; /nologo"
+    <Exec Command="dotnet publish &quot;$(MSBuildProjectDirectory)\installer\mystic-rgb.installer.csproj&quot; -c $(Configuration) -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishDir=&quot;$(MSBuildProjectDirectory)\obj\installer-publish&quot; /nologo"
           IgnoreExitCode="false" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\obj\installer-publish\mystic-rgb-installer.exe"
           DestinationFiles="$(MSBuildProjectDirectory)\$(OutputPath)mystic-rgb-installer.exe"
